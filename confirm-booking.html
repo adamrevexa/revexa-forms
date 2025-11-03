@@ -240,8 +240,7 @@
     <script>
         // Hämta booking ID från URL
         const urlParams = new URLSearchParams(window.location.search);
-        const pathParts = window.location.pathname.split('/');
-        const bookingId = pathParts[pathParts.length - 1] || urlParams.get('id');
+        const bookingId = urlParams.get('id');
 
         console.log('Booking ID:', bookingId);
 
