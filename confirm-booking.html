@@ -58,6 +58,7 @@
             font-size: 14px;
         }
 
+        input[type="text"],
         input[type="email"],
         input[type="tel"] {
             width: 100%;
@@ -68,6 +69,7 @@
             transition: border-color 0.3s;
         }
 
+        input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="tel"]:focus {
             outline: none;
@@ -171,6 +173,20 @@
         .loading.show {
             display: block;
         }
+
+        /* Name fields on same row for desktop */
+        .name-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .name-row {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -183,6 +199,34 @@
         <div id="error" class="error-message"></div>
 
         <form id="confirmForm">
+            <!-- NAME FIELDS (NEW!) -->
+            <div class="name-row">
+                <div class="form-group">
+                    <label for="firstName">Förnamn *</label>
+                    <input 
+                        type="text" 
+                        id="firstName" 
+                        name="firstName" 
+                        placeholder="T.ex. Ludvig"
+                        autocomplete="given-name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Efternamn *</label>
+                    <input 
+                        type="text" 
+                        id="lastName" 
+                        name="lastName" 
+                        placeholder="T.ex. Andersson"
+                        autocomplete="family-name"
+                        required
+                    >
+                </div>
+            </div>
+
+            <!-- EMAIL FIELD -->
             <div class="form-group">
                 <label for="email">E-postadress *</label>
                 <input 
@@ -190,10 +234,12 @@
                     id="email" 
                     name="email" 
                     placeholder="din.email@exempel.se"
+                    autocomplete="email"
                     required
                 >
             </div>
 
+            <!-- PHONE FIELD -->
             <div class="form-group">
                 <label for="phone">Telefonnummer *</label>
                 <input 
@@ -202,10 +248,12 @@
                     name="phone" 
                     placeholder="0701234567"
                     pattern="[0-9]{10}"
+                    autocomplete="tel"
                     required
                 >
             </div>
 
+            <!-- CONFIRMATION CHECKBOX -->
             <div class="form-group">
                 <div class="checkbox-group">
                     <input 
@@ -262,10 +310,12 @@
             submitBtn.disabled = true;
             loading.classList.add('show');
 
-            // Samla form data
+            // Samla form data (UPDATED - includes name fields!)
             const formData = {
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
                 confirm: document.getElementById('confirm').checked
             };
 
