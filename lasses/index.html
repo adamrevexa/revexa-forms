@@ -366,13 +366,10 @@
     </div>
 
     <script>
-        // Hämta booking ID från URL
-        const urlParams = new URLSearchParams(window.location.search);
-        // Get bookingId from path (last segment)
-        const pathParts = window.location.pathname.split('/');
-        const bookingId = pathParts[pathParts.length - 1];
-
-        console.log('Booking ID:', bookingId);
+    // Hämta booking ID från URL query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingId = urlParams.get('id');
+    console.log('Booking ID:', bookingId);
 
         // Form submit handler
         document.getElementById('confirmForm').addEventListener('submit', async (e) => {
