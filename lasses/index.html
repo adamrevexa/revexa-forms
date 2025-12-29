@@ -196,13 +196,6 @@
             display: block;
         }
 
-        /* Name fields on same row for desktop */
-        .name-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
         /* Postnummer and Ort on same row */
         .address-row {
             display: grid;
@@ -211,7 +204,6 @@
         }
 
         @media (max-width: 600px) {
-            .name-row,
             .address-row {
                 grid-template-columns: 1fr;
                 gap: 20px;
@@ -238,30 +230,16 @@
             <div class="form-section">
                 <div class="section-title">Dina uppgifter</div>
                 
-                <div class="name-row">
-                    <div class="form-group">
-                        <label for="firstName">Förnamn *</label>
-                        <input 
-                            type="text" 
-                            id="firstName" 
-                            name="firstName" 
-                            placeholder="T.ex. Anna"
-                            autocomplete="given-name"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="lastName">Efternamn *</label>
-                        <input 
-                            type="text" 
-                            id="lastName" 
-                            name="lastName" 
-                            placeholder="T.ex. Andersson"
-                            autocomplete="family-name"
-                            required
-                        >
-                    </div>
+                <div class="form-group">
+                    <label for="fullName">Namn *</label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        name="fullName" 
+                        placeholder="T.ex. Anna Andersson"
+                        autocomplete="name"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
@@ -366,10 +344,10 @@
     </div>
 
     <script>
-    // Hämta booking ID från URL query parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const bookingId = urlParams.get('id');
-    console.log('Booking ID:', bookingId);
+        // Hämta booking ID från URL query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookingId = urlParams.get('id');
+        console.log('Booking ID:', bookingId);
 
         // Form submit handler
         document.getElementById('confirmForm').addEventListener('submit', async (e) => {
@@ -391,8 +369,7 @@
 
             // Samla form data
             const formData = {
-                firstName: document.getElementById('firstName').value.trim(),
-                lastName: document.getElementById('lastName').value.trim(),
+                fullName: document.getElementById('fullName').value.trim(),
                 email: document.getElementById('email').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 streetAddress: document.getElementById('streetAddress').value.trim(),
