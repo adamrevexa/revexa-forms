@@ -204,6 +204,59 @@
             font-size: 0.813rem;
         }
 
+        /* Demo banner for UTM display */
+        .demo-banner {
+            background-color: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.75rem;
+        }
+
+        .demo-banner-title {
+            color: #c1ff72;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-banner-content {
+            color: #888888;
+            line-height: 1.6;
+        }
+
+        .demo-banner-content code {
+            background-color: #000000;
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+            color: #c1ff72;
+            font-family: monospace;
+        }
+
+        .utm-display {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #333333;
+        }
+
+        .utm-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+
+        .utm-label {
+            color: #666666;
+        }
+
+        .utm-value {
+            color: #c1ff72;
+            font-family: monospace;
+        }
+
         @media (max-width: 480px) {
             .card {
                 padding: 1.5rem;
@@ -220,6 +273,32 @@
         <div class="logo">Revexa</div>
 
         <div class="card">
+            <!-- Demo Banner showing UTM tracking -->
+            <div class="demo-banner" id="demo-banner">
+                <div class="demo-banner-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    DEMO - UTM Tracking Active
+                </div>
+                <div class="demo-banner-content">
+                    Testa med UTM-parametrar i URL:en:<br>
+                    <code>?utm_source=google&utm_campaign=solar_ads</code>
+                    <div class="utm-display" id="utm-display">
+                        <div class="utm-item">
+                            <span class="utm-label">utm_source:</span>
+                            <span class="utm-value" id="display-source">direct</span>
+                        </div>
+                        <div class="utm-item">
+                            <span class="utm-label">utm_campaign:</span>
+                            <span class="utm-value" id="display-campaign">none</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="form-container">
                 <h1>Få en kostnadsfri solcellsanalys</h1>
                 <p class="subtitle">Fyll i formuläret så ringer vi upp dig inom ett par minuter för att diskutera dina möjligheter.</p>
@@ -266,7 +345,7 @@
             </div>
         </div>
 
-        <p class="footer">Revexa AB</p>
+        <p class="footer">Revexa AB - Speed to Lead Demo</p>
     </div>
 
     <script>
@@ -277,15 +356,31 @@
         const formContainer = document.getElementById('form-container');
         const successContainer = document.getElementById('success-container');
 
+        // Parse UTM parameters from URL
+        function getUTMParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                utm_source: params.get('utm_source') || 'direct',
+                utm_campaign: params.get('utm_campaign') || '',
+                utm_medium: params.get('utm_medium') || '',
+                utm_term: params.get('utm_term') || '',
+                utm_content: params.get('utm_content') || ''
+            };
+        }
+
+        // Display UTM params in demo banner
+        function displayUTMParams() {
+            const utm = getUTMParams();
+            document.getElementById('display-source').textContent = utm.utm_source;
+            document.getElementById('display-campaign').textContent = utm.utm_campaign || 'none';
+        }
+
+        // Initialize UTM display
+        displayUTMParams();
+
         // Swedish phone number validation
         function isValidSwedishPhone(phone) {
-            // Remove all non-digits
             const cleaned = phone.replace(/\D/g, '');
-
-            // Valid formats:
-            // 07X XXX XX XX (10 digits starting with 07)
-            // +467X XXX XX XX (11 digits starting with 467)
-            // 467X XXX XX XX (11 digits starting with 467)
 
             if (cleaned.length === 10 && cleaned.startsWith('07')) {
                 return true;
@@ -385,12 +480,26 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Skickar...';
 
+            // Get UTM parameters
+            const utm = getUTMParams();
+
             const formData = {
+                // Lead data
                 name: document.getElementById('name').value.trim(),
                 phone: formatPhoneE164(document.getElementById('phone').value.trim()),
                 email: document.getElementById('email').value.trim(),
                 consent: document.getElementById('consent').checked,
-                timestamp: new Date().toISOString()
+
+                // Timestamp
+                timestamp: new Date().toISOString(),
+
+                // Attribution
+                utm_source: utm.utm_source,
+                utm_campaign: utm.utm_campaign,
+
+                // Page info
+                landing_page: window.location.href,
+                referrer: document.referrer || 'direct'
             };
 
             try {
@@ -403,6 +512,8 @@
                 });
 
                 if (response.ok) {
+                    // Hide demo banner on success
+                    document.getElementById('demo-banner').style.display = 'none';
                     // Show success message
                     formContainer.style.display = 'none';
                     successContainer.style.display = 'block';
@@ -411,8 +522,8 @@
                 }
             } catch (error) {
                 console.error('Error submitting form:', error);
-                // Still show success to user (webhook might be down but we don't want to block UX)
-                // In production, you might want to handle this differently
+                // Still show success to user
+                document.getElementById('demo-banner').style.display = 'none';
                 formContainer.style.display = 'none';
                 successContainer.style.display = 'block';
             }
